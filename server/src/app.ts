@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/analysis/" , analysisRouter);
-app.use("/api/relationships/", analysisRouter);
+app.use("/api/relationships/", relationshipsRouter);
 
 app.get("/ping", (req: Request, res: Response) => {
   res.status(200).send("pong");

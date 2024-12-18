@@ -1,12 +1,13 @@
 import { Router } from "express";
+import { deadliestRegions, groupsByYear, topGroups } from "../controllers/relationshipsController";
 
 const router = Router()
 
-router.get("api/relationships/groups-by-year");
+router.get("groups-by-year", groupsByYear);
 
-router.get("deadliest-regions");
+router.get("deadliest-regions", deadliestRegions);
 
-router.get("/top-groups");
+router.get("top-groups", topGroups);
 
 
 
