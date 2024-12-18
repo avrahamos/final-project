@@ -4,6 +4,7 @@ import { Summary } from "../models/summary";
 import { AttackType } from "../models/atackType";
 import { Country } from "../models/country";
 import { Organization } from "../models/groupName";
+import { Year } from "../models/year";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -213,6 +214,56 @@ export const aggregateOrganizations = async () => {
   }
 };
 
+export const aggregateYearsWithEvents = async () => {
+  try {
+    const aggregatedData = await Summary.aggregate([
+      {
+        $match: {
+          iyear: { $exists: true, $ne: null },
+          imonth: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: { year: "$iyear", month: "$imonth" },
+          eventsNum: { $sum: 1 }, 
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.year",
+          months: {
+            $push: {
+              month: "$_id.month",
+              eventsNum: "$eventsNum",
+            },
+          },
+          totalEvents: { $sum: "$eventsNum" }, 
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id",
+          months: 1, 
+          totalEvents: 1, 
+        },
+      },
+    ]);
+
+    for (const data of aggregatedData) {
+      await Year.updateOne(
+        { year: data.year }, 
+        { $set: data }, 
+        { upsert: true } 
+      );
+    }
+
+    console.log("Data aggregated successfully");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 
