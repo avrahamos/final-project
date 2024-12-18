@@ -2,6 +2,7 @@ import fs from "fs";
 import mongoose from "mongoose";
 import { Summary } from "../models/summary";
 import { AttackType } from "../models/atackType";
+import { Country } from "../models/country";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -33,6 +34,7 @@ export const processJSONFile = async (filePath: string) => {
     mongoose.connection.close();
   }
 };
+
 
 export const aggregateAndInsertAttackTypes = async () => {
   try {
@@ -74,3 +76,69 @@ export const aggregateAndInsertAttackTypes = async () => {
   }
 };
 
+
+export const aggregateAndInsertCountries = async () => {
+  try {
+    const aggregatedData = await Summary.aggregate([
+      {
+        $match: {
+          country_txt: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: { country: "$country_txt", city: "$city", eventid: "$eventid" },
+          casualties: { $sum: { $add: ["$nkill", "$nwound"] } },
+          latitude: { $first: "$latitude" },
+          longitude: { $first: "$longitude" },
+        },
+      },
+      {
+        $group: {
+          _id: { country: "$_id.country", city: "$_id.city" },
+          events: {
+            $push: {
+              latitude: "$latitude",
+              longitude: "$longitude",
+              casualties: "$casualties",
+            },
+          },
+          cityTotalCasualties: { $sum: "$casualties" },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.country",
+          cities: {
+            $push: {
+              city: "$_id.city",
+              events: "$events",
+              sum: "$cityTotalCasualties",
+            },
+          },
+          totalevg: { $sum: "$cityTotalCasualties" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          country: "$_id",
+          cities: 1,
+          totalevg: 1,
+        },
+      },
+    ]);
+
+    for (const data of aggregatedData) {
+      await Country.updateOne(
+        { country: data.country },
+        { $set: data },
+        { upsert: true }
+      );
+    }
+
+    console.log("Data aggregated and inserted successfully!");
+  } catch (error) {
+    console.error("Error during aggregation and insertion:", error);
+  }
+};
