@@ -147,13 +147,26 @@ export const aggregateOrganizations = async () => {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          gname: { $exists: true, $ne: null },
+          gname: { $exists: true, $ne: null }, 
         },
       },
       {
         $group: {
-          _id: { gname: "$gname", region: "$region_txt" },
+          _id: { gname: "$gname", region: "$region_txt", year: "$iyear" },
           totalCasualties: { $sum: { $add: ["$nkill", "$nwound"] } },
+          events: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: { gname: "$_id.gname", region: "$_id.region" },
+          years: {
+            $push: {
+              year: "$_id.year",
+              events: "$events", 
+            },
+          },
+          casualties: { $sum: "$totalCasualties" },
         },
       },
       {
@@ -162,10 +175,11 @@ export const aggregateOrganizations = async () => {
           regions: {
             $push: {
               region: "$_id.region",
-              casualties: "$totalCasualties",
+              casualties: "$casualties",
             },
           },
-          totalCasualties: { $sum: "$totalCasualties" },
+          years: { $push: "$years" },
+          totalCasualties: { $sum: "$casualties" },
         },
       },
       {
@@ -173,6 +187,13 @@ export const aggregateOrganizations = async () => {
           _id: 0,
           gname: "$_id",
           regions: 1,
+          years: {
+            $reduce: {
+              input: "$years",
+              initialValue: [],
+              in: { $concatArrays: ["$$value", "$$this"] },
+            },
+          },
           totalCasualties: 1,
         },
       },
@@ -180,14 +201,19 @@ export const aggregateOrganizations = async () => {
 
     for (const data of aggregatedData) {
       await Organization.updateOne(
-        { gname: data.gname },
-        { $set: data },
-        { upsert: true }
+        { gname: data.gname }, 
+        { $set: data }, 
+        { upsert: true } 
       );
     }
 
-    console.log("Data aggregated successfully!");
+    console.log("Data aggregated successfully");
   } catch (error) {
     console.error(error);
   }
 };
+
+
+
+
+
