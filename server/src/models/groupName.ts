@@ -1,30 +1,25 @@
-import { Document, model, Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface IGname extends Document {
-  gname: {
-    Region: {
-      eventLocation: {
-        latitude: number;
-        longitude: number;
-        Casualties: number;
-      };
-    };
-    totalCasualties: number;
-    TotalAmount: number;
-  };
+export interface IRegion extends Document{
+  region: string; 
+  casualties: number; 
 }
 
-const GnameSchema = new Schema({
-  gname: {
-    Region: {
-      eventLocation: {
-        latitude: { type: Number, required: false },
-        longitude: { type: Number, required: false },
-        Casualties: { type: Number, required: false },
-      },
-    },
-    totalCasualties: { type: Number, required: false },
-    TotalAmount: { type: Number, required: false },
-  },
+export interface IOrganization extends Document {
+  gname: string; 
+  regions: IRegion[]; 
+  totalCasualties: number; 
+}
+
+const RegionSchema = new Schema<IRegion>({
+  region: { type: String, required: true }, 
+  casualties: { type: Number, required: true }, 
 });
-export const Gname = model<IGname>("Gname", GnameSchema);
+
+const OrganizationSchema = new Schema<IOrganization>({
+  gname: { type: String, required: true }, 
+  regions: [RegionSchema], 
+  totalCasualties: { type: Number, default: 0 }, 
+});
+
+export const Organization = model("Organization", OrganizationSchema);

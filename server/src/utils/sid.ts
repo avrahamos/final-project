@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Summary } from "../models/summary";
 import { AttackType } from "../models/atackType";
 import { Country } from "../models/country";
+import { Organization } from "../models/groupName";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -35,47 +36,45 @@ export const processJSONFile = async (filePath: string) => {
   }
 };
 
-
 export const aggregateAndInsertAttackTypes = async () => {
   try {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          attacktype1_txt: { $exists: true, $ne: null }, 
+          attacktype1_txt: { $exists: true, $ne: null },
         },
       },
       {
         $group: {
-          _id: "$attacktype1_txt", 
-          totalNKill: { $sum: "$nkill" }, 
-          totalNWound: { $sum: "$nwound" }, 
+          _id: "$attacktype1_txt",
+          totalNKill: { $sum: "$nkill" },
+          totalNWound: { $sum: "$nwound" },
         },
       },
       {
         $project: {
-          _id: 0, 
-          attacktype: "$_id", 
-          nkill: "$totalNKill", 
-          nwound: "$totalNWound", 
-          totalAmount: { $add: ["$totalNKill", "$totalNWound"] }, 
+          _id: 0,
+          attacktype: "$_id",
+          nkill: "$totalNKill",
+          nwound: "$totalNWound",
+          totalAmount: { $add: ["$totalNKill", "$totalNWound"] },
         },
       },
     ]);
 
     for (const data of aggregatedData) {
       await AttackType.updateOne(
-        { attacktype: data.attacktype }, 
-        { $set: data }, 
-        { upsert: true } 
+        { attacktype: data.attacktype },
+        { $set: data },
+        { upsert: true }
       );
     }
 
-    console.log("Data aggregated and inserted successfully!");
+    console.log("Data aggregated successfully!");
   } catch (error) {
-    console.error("Error during aggregation and insertion:", error);
+    console.error(error);
   }
 };
-
 
 export const aggregateAndInsertCountries = async () => {
   try {
@@ -137,8 +136,58 @@ export const aggregateAndInsertCountries = async () => {
       );
     }
 
-    console.log("Data aggregated and inserted successfully!");
+    console.log("Data aggregated successfully!");
   } catch (error) {
-    console.error("Error during aggregation and insertion:", error);
+    console.error(error);
+  }
+};
+
+export const aggregateOrganizations = async () => {
+  try {
+    const aggregatedData = await Summary.aggregate([
+      {
+        $match: {
+          gname: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: { gname: "$gname", region: "$region_txt" },
+          totalCasualties: { $sum: { $add: ["$nkill", "$nwound"] } },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.gname",
+          regions: {
+            $push: {
+              region: "$_id.region",
+              casualties: "$totalCasualties",
+            },
+          },
+          totalCasualties: { $sum: "$totalCasualties" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          gname: "$_id",
+          regions: 1,
+          totalCasualties: 1,
+        },
+      },
+    ]);
+
+    for (const data of aggregatedData) {
+      await Organization.updateOne(
+        { gname: data.gname },
+        { $set: data },
+        { upsert: true }
+      );
+    }
+
+    console.log("Data aggregated successfully!");
+  } catch (error) {
+    console.error(error);
   }
 };
