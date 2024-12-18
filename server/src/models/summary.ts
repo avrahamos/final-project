@@ -33,4 +33,5 @@ const SummarySchema = new Schema({
   nwound: { type: Number},
   TotalAmount: { type: Number},
 });
+
 export const Summary = model<ISummary>("Summary", SummarySchema);
