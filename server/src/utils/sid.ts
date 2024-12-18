@@ -1,6 +1,7 @@
 import fs from "fs";
 import mongoose from "mongoose";
 import { Summary } from "../models/summary";
+import { AttackType } from "../models/atackType";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -30,6 +31,46 @@ export const processJSONFile = async (filePath: string) => {
     console.error("Error processing the file:", error);
   } finally {
     mongoose.connection.close();
+  }
+};
+
+export const aggregateAndInsertAttackTypes = async () => {
+  try {
+    const aggregatedData = await Summary.aggregate([
+      {
+        $match: {
+          attacktype1_txt: { $exists: true, $ne: null }, 
+        },
+      },
+      {
+        $group: {
+          _id: "$attacktype1_txt", 
+          totalNKill: { $sum: "$nkill" }, 
+          totalNWound: { $sum: "$nwound" }, 
+        },
+      },
+      {
+        $project: {
+          _id: 0, 
+          attacktype: "$_id", 
+          nkill: "$totalNKill", 
+          nwound: "$totalNWound", 
+          totalAmount: { $add: ["$totalNKill", "$totalNWound"] }, 
+        },
+      },
+    ]);
+
+    for (const data of aggregatedData) {
+      await AttackType.updateOne(
+        { attacktype: data.attacktype }, 
+        { $set: data }, 
+        { upsert: true } 
+      );
+    }
+
+    console.log("Data aggregated and inserted successfully!");
+  } catch (error) {
+    console.error("Error during aggregation and insertion:", error);
   }
 };
 
