@@ -5,6 +5,7 @@ import { AttackType } from "../models/atackType";
 import { Country } from "../models/country";
 import { Organization } from "../models/groupName";
 import { Year } from "../models/year";
+import { OrganizationImpact } from "../models/regionDamage";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -29,9 +30,8 @@ export const processJSONFile = async (filePath: string) => {
     }));
 
     await Summary.insertMany(validDocuments);
-    console.log("Documents inserted successfully!");
   } catch (error) {
-    console.error("Error processing the file:", error);
+    console.error(error);
   } finally {
     mongoose.connection.close();
   }
@@ -137,7 +137,7 @@ export const aggregateAndInsertCountries = async () => {
       );
     }
 
-    console.log("Data aggregated successfully!");
+    console.log("data aggregated successfully!");
   } catch (error) {
     console.error(error);
   }
@@ -208,7 +208,7 @@ export const aggregateOrganizations = async () => {
       );
     }
 
-    console.log("Data aggregated successfully");
+    console.log("data aggregated successfully");
   } catch (error) {
     console.error(error);
   }
@@ -259,12 +259,66 @@ export const aggregateYearsWithEvents = async () => {
       );
     }
 
-    console.log("Data aggregated successfully");
+    console.log("data aggregated successfully");
   } catch (error) {
     console.error(error);
   }
 };
 
+export const aggregateOrganizationImpact = async () => {
+  try {
+    const impacts = await Summary.aggregate([
+      {
+        $match: {
+          gname: { $exists: true, $ne: null }, 
+        },
+      },
+      {
+        $group: {
+          _id: {
+            gname: "$gname",
+            region: "$region_txt",
+            latitude: "$latitude",
+            longitude: "$longitude",
+          },
+          casualties: { $sum: { $add: ["$nkill", "$nwound"] } }, 
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.gname",
+          regions: {
+            $push: {
+              region: "$_id.region",
+              casualties: "$casualties",
+              latitude: "$_id.latitude",
+              longitude: "$_id.longitude",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          gname: "$_id",
+          regions: 1,
+        },
+      },
+    ]);
+
+    for (const impact of impacts) {
+      await OrganizationImpact.updateOne(
+        { gname: impact.gname },
+        { $set: impact },
+        { upsert: true }
+      );
+    }
+
+    console.log("data aggregated successfully!");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 
