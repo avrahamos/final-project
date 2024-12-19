@@ -1,4 +1,4 @@
-import { ICountryData, IHighCasualtyRegions } from "../types/analysis";
+import { ICountryData, IDeadliestAttackTypes, IHighCasualtyRegions } from "../types/analysis";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -54,5 +54,35 @@ export const fetchGetCountryDetails = async (
   } catch (err) {
     console.error(err);
     throw new Error("Unable to fetch Please try again");
+  }
+};
+
+
+export const fetchGetDeadliestAttackTypes = async (): Promise<
+  IDeadliestAttackTypes[]
+> => {
+  try {
+    const res = await fetch(
+      `${apiUrl || "http://localhost:9876"}/analysis/deadliest-attack-types`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const errorMessage = await res.text();
+      throw new Error(`Failed to fetch: ${errorMessage}`);
+    }
+
+    const deadliestAttackTypes: IDeadliestAttackTypes[] = await res.json();
+    return deadliestAttackTypes;
+  } catch (err) {
+    console.error(err);
+    throw new Error(
+      "unable to fetch please try again"
+    );
   }
 };

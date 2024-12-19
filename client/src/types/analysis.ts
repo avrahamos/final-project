@@ -23,3 +23,10 @@ export interface ICountryData {
   cities: ICity[];
   totalevg: number;
 }
+export interface IDeadliestAttackTypes {
+  _id: string;
+  attacktype: string;
+  nkill: number;
+  nwound: number;
+  totalAmount: number;
+}
