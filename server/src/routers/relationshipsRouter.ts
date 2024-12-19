@@ -3,11 +3,11 @@ import { deadliestRegions, groupsByYear, topGroups } from "../controllers/relati
 
 const router = Router()
 
-router.get("groups-by-year", groupsByYear);
+router.get("/groups-by-year", groupsByYear);
 
-router.get("deadliest-regions", deadliestRegions);
+router.get("/deadliest-regions", deadliestRegions);
 
-router.get("top-groups", topGroups);
+router.get("/top-groups", topGroups);
 
 
 
