@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "chart": "^0.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
+    "recharts": "^2.15.0",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {
