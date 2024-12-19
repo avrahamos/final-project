@@ -1,4 +1,4 @@
-import { ICountryData, IDeadliestAttackTypes, IHighCasualtyRegions } from "../types/analysis";
+import { ICountryData, IDeadliestAttackTypes, IHighCasualtyRegions, IIncidentTrends } from "../types/analysis";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -84,5 +84,52 @@ export const fetchGetDeadliestAttackTypes = async (): Promise<
     throw new Error(
       "unable to fetch please try again"
     );
+  }
+};
+
+interface FetchIncidentTrendsParams {
+  type: "singleYear" | "range" | "recent";
+  year?: number;
+  startYear?: number;
+  endYear?: number;
+  limit?: number;
+}
+
+export const fetchIncidentTrends = async (
+  params: FetchIncidentTrendsParams
+): Promise<IIncidentTrends[]> => {
+  try {
+    const queryParams = new URLSearchParams();
+
+    queryParams.append("type", params.type);
+    if (params.year) queryParams.append("year", params.year.toString());
+    if (params.startYear)
+      queryParams.append("startYear", params.startYear.toString());
+    if (params.endYear)
+      queryParams.append("endYear", params.endYear.toString());
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+
+    const res = await fetch(
+      `${
+        apiUrl || "http://localhost:9876"
+      }/analysis/incident-trends?${queryParams.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const errorMessage = await res.text();
+      throw new Error(`Failed to fetch: ${errorMessage}`);
+    }
+
+    const incidentTrends: IIncidentTrends[] = await res.json();
+    return incidentTrends;
+  } catch (err) {
+    console.error(err);
+    throw new Error("unable to fetch please try again");
   }
 };
