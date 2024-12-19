@@ -8,6 +8,23 @@ const DeadliestAttackGraph: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const mapDeadliestAttackData = (
+    attackData: IDeadliestAttackTypes[]
+  ): {
+    attacktype: string;
+    nkill: number;
+    nwound: number;
+    totalAmount: number;
+  }[] => {
+    return attackData.map((item) => ({
+      attacktype: item.attacktype,
+      nkill: item.nkill,
+      nwound: item.nwound,
+      totalAmount: item.totalAmount,
+    }));
+  };
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,9 +61,15 @@ const DeadliestAttackGraph: React.FC = () => {
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Deadliest Attack Types
       </h2>
-      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
-        <Graph data={data} />
-      </div>
+      <Graph
+        data={mapDeadliestAttackData(data)} 
+        xKey="attacktype" 
+        bars={[
+          { key: "nkill", color: "#ff4d4d", name: "Number of Kills" },
+          { key: "nwound", color: "#82ca9d", name: "Number of Wounds" },
+          { key: "totalAmount", color: "#ffc658", name: "Total Amount" },
+        ]}
+      />
     </div>
   );
 };
