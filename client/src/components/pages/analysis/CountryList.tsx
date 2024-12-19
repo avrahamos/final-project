@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { IHighCasualtyRegions } from "../../../types/analysis";
 import { fetchGetHighCasualtyRegions } from "../../../fatches/analysis";
-import CityList from "./CityList";
+import { useNavigate } from "react-router-dom";
 
 const CountryList: React.FC = () => {
   const [regions, setRegions] = useState<IHighCasualtyRegions[]>([]);
   const [visibleCount, setVisibleCount] = useState<number>(10);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,13 +21,8 @@ const CountryList: React.FC = () => {
   };
 
   const handleCountryClick = (countryName: string) => {
-    setSelectedCountry(countryName);
+    navigate("/cities", { state: { countryName } });
   };
-
-  if (selectedCountry) {
-    return <CityList countryName={selectedCountry} goBack={() => setSelectedCountry(null)} />;
-  }
-
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">High Casualty Regions</h1>
