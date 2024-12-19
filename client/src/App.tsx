@@ -1,5 +1,5 @@
 import React from "react";
-import Map from "./components/pages/Map";
+import Map from "./components/Map";
 
 const App: React.FC = () => {
   const center: [number, number] = [31.771599, 35.2034];
