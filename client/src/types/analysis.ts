@@ -6,7 +6,7 @@ export interface IHighCasualtyRegions {
 export interface IEvent {
   latitude: number | null;
   longitude: number | null
-  casualties: number;
+  casualties?: number;
   _id: string;
 }
 

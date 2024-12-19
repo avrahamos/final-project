@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 interface MapProps {
   center: [number, number];
   zoom: number;
-  markers: { latitude: number; longitude: number; popupText?: string }[];
+  markers: { latitude: number; longitude: number; popupText?: string | number}[];
 }
 
 const Map: React.FC<MapProps> = ({ center, zoom, markers }) => {
