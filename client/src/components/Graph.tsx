@@ -9,27 +9,27 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { name: "January", uv: 400, pv: 2400, amt: 2400 },
-  { name: "February", uv: 300, pv: 1398, amt: 2210 },
-  { name: "March", uv: 200, pv: 9800, amt: 2290 },
-  { name: "April", uv: 278, pv: 3908, amt: 2000 },
-  { name: "May", uv: 189, pv: 4800, amt: 2181 },
-];
+interface GraphProps {
+  data: {
+    attacktype: string;
+    nkill: number;
+    nwound: number;
+    totalAmount: number;
+  }[];
+}
 
-const Graph = () => {
+const Graph: React.FC<GraphProps> = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart
-        data={data}
-      >
+      <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="attacktype" />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="uv" fill="#8884d8" />
-        <Bar dataKey="pv" fill="#82ca9d" />
+        <Bar dataKey="nkill" fill="#8884d8" name="Number of Kills" />
+        <Bar dataKey="nwound" fill="#82ca9d" name="Number of Wounds" />
+        <Bar dataKey="totalAmount" fill="#ffc658" name="Total Amount" />
       </BarChart>
     </ResponsiveContainer>
   );
