@@ -1,17 +1,18 @@
-import { Year } from "../models/year";
+import { IYear, Year } from "../models/year";
 
-export const getYearDetails = async (yearNumber: number) => {
+export const getYearDetails = async (yearNumber: number): Promise<IYear[]> => {
   try {
-    const yearDetails = await Year.findOne({ year: yearNumber }).lean();
+    const yearDetails = await Year.findOne({ year: yearNumber }).lean<IYear>();
     console.log(yearDetails);
+
     if (!yearDetails) {
-      throw new Error(`year ${yearNumber} not found`);
+      throw new Error(`Year ${yearNumber} not found`);
     }
 
-    return yearDetails;
+    return [yearDetails];
   } catch (error) {
     console.error(error);
-    throw new Error();
+    throw new Error(`Failed to get details for year ${yearNumber}`);
   }
 };
 

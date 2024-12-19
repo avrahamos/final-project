@@ -30,3 +30,24 @@ export interface IDeadliestAttackTypes {
   nwound: number;
   totalAmount: number;
 }
+
+export interface IIncidentTrends {
+  _id: string;
+  year: number;
+  totalEvents: number;
+  months: {
+    month: number;
+    eventsNum: number;
+    _id: string;
+  }[];
+}
+export interface IMonth {
+  month: number;
+  eventsNum: number;
+}
+
+export interface IYear {
+  year: number;
+  months: IMonth[];
+  totalEvents: number;
+}
