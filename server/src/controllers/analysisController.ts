@@ -5,7 +5,6 @@ import {
   highestCasualtyRegionsService,
   incidentTrendsService,
 } from "../services/analysisService";
-import { getRecentYears } from "../utils/yearUtils";
 
 export const deadliestAttackTypes = async (req: Request, res: Response) => {
   try {
