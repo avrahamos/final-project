@@ -19,17 +19,23 @@ export const processJSONFile = async (filePath: string) => {
       iday: doc.iday || null,
       country_txt: doc.country_txt,
       region_txt: doc.region_txt,
-      city: doc.city || "Unknown",
+      city: doc.city || null,
       latitude: doc.latitude || null,
       longitude: doc.longitude || null,
       attacktype1_txt: doc.attacktype1_txt,
-      gname: doc.gname || "Unknown",
+      gname: doc.gname || null,
       nkill: doc.nkill || 0,
       nwound: doc.nwound || 0,
       TotalAmount: (doc.nkill || 0) + (doc.nwound || 0),
+      targtype1_txt: doc.targtype1_txt || null,
+      target1: doc.target1 || null,
+      weaptype1_txt: doc.weaptype1_txt || null,
+      nperps: doc.nperps || 0,
+      summary: doc.summary || null,
     }));
 
     await Summary.insertMany(validDocuments);
+    console.log("data inserted");
   } catch (error) {
     console.error(error);
   } finally {

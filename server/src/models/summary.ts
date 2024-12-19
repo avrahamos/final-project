@@ -15,23 +15,33 @@ export interface ISummary extends Document {
   nkill?: number;
   nwound?: number;
   TotalAmount?: number;
+  targtype1_txt?: string;
+  target1?: string;
+  weaptype1_txt?: string;
+  nperps?: number;
+  summary?: string;
 }
 
-const SummarySchema = new Schema({
+const SummarySchema = new Schema<ISummary>({
   eventid: { type: Number },
   iyear: { type: Number },
   imonth: { type: Number },
   iday: { type: Number },
-  country_txt: { type: String},
+  country_txt: { type: String },
   region_txt: { type: String },
-  city: { type: String},
-  latitude: { type: Number},
+  city: { type: String },
+  latitude: { type: Number },
   longitude: { type: Number },
-  attacktype1_txt: { type: String},
+  attacktype1_txt: { type: String },
   gname: { type: String },
   nkill: { type: Number },
-  nwound: { type: Number},
-  TotalAmount: { type: Number},
+  nwound: { type: Number },
+  TotalAmount: { type: Number },
+  targtype1_txt: { type: String },
+  target1: { type: String },
+  weaptype1_txt: { type: String },
+  nperps: { type: Number },
+  summary: { type: String },
 });
 
 export const Summary = model<ISummary>("Summary", SummarySchema);
