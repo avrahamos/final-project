@@ -24,7 +24,7 @@ const YearSchema = new Schema<IYear>({
 
 const RegionSchema = new Schema<IRegion>({
   region: { type: String, required: true }, 
-  casualties: { type: Number, required: true }, 
+  casualties: { type: Number}, 
 });
 
 const OrganizationSchema = new Schema<IOrganization>({
