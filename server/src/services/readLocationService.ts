@@ -2,12 +2,31 @@ import { Coordinates } from "../models/coordinates";
 
 export const getAllCoordinates = async () => {
   try {
-    return await Coordinates.find({}); 
+    const coordinates = await Coordinates.aggregate([
+      {
+        $group: {
+          _id: "$country",
+          latitude: { $first: "$latitude" },
+          longitude: { $first: "$longitude" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          country: "$_id",
+          latitude: 1,
+          longitude: 1,
+        },
+      },
+    ]);
+
+    return coordinates;
   } catch (error) {
-    console.error( error);
-    throw new Error("failed to fetch ");
+    console.error(error);
+    throw new Error("failed to fetch");
   }
 };
+
 
 export const searchCoordinates = async (query: {
   city?: string;
