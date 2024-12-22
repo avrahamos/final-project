@@ -7,7 +7,7 @@ export const fetchGetHighCasualtyRegions = async (): Promise<
 > => {
   try {
     const res = await fetch(
-      `${apiUrl || "http://localhost:9876"}/analysis/highest-casualty-regions`,
+      `${apiUrl || "http://localhost:9876"}/api/analysis/highest-casualty-regions`,
       {
         method: "GET",
         headers: {
@@ -35,7 +35,7 @@ export const fetchGetCountryDetails = async (
 ): Promise<ICountryData> => {
   try {
     const res = await fetch(
-      `${apiUrl || "http://localhost:9876"}/analysis/${countryName}`,
+      `${apiUrl || "http://localhost:9876"}/api/analysis/${countryName}`,
       {
         method: "GET",
         headers: {
@@ -63,7 +63,9 @@ export const fetchGetDeadliestAttackTypes = async (): Promise<
 > => {
   try {
     const res = await fetch(
-      `${apiUrl || "http://localhost:9876"}/analysis/deadliest-attack-types`,
+      `${
+        apiUrl || "http://localhost:9876"
+      }/api/analysis/deadliest-attack-types`,
       {
         method: "GET",
         headers: {
@@ -112,7 +114,7 @@ export const fetchIncidentTrends = async (
     const res = await fetch(
       `${
         apiUrl || "http://localhost:9876"
-      }/analysis/incident-trends?${queryParams.toString()}`,
+      }/api/analysis/incident-trends?${queryParams.toString()}`,
       {
         method: "GET",
         headers: {

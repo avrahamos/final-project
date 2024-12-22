@@ -9,7 +9,7 @@ export const fetchTopGroups = async (
     const res = await fetch(
       `${
         apiUrl || "http://localhost:9876"
-      }/relationships/top-groups?region=${encodeURIComponent(regionName)}`,
+      }/api/relationships/top-groups?region=${regionName}`,
       {
         method: "GET",
         headers: {
@@ -38,7 +38,7 @@ export const fetchGroupsByYear = async (
     const response = await fetch(
       `${
         apiUrl || "http://localhost:9876"
-      }/relationships/groups-by-year?year=${year}`,
+      }/api/relationships/groups-by-year?year=${year}`,
       {
         method: "GET",
         headers: {
@@ -64,7 +64,7 @@ export const fetchGroupsByYear = async (
 export const fetchRegionsList = async (): Promise<IRegion[]> => {
   try {
     const res = await fetch(
-      `${apiUrl || "http://localhost:9876"}/relationships/regions-list`,
+      `${apiUrl || "http://localhost:9876"}/api/relationships/regions-list`,
       {
         method: "GET",
         headers: {
@@ -89,7 +89,7 @@ export const fetchRegionsList = async (): Promise<IRegion[]> => {
 export const fetchOrganizations = async (): Promise<string[]> => {
   try {
     const response = await fetch(
-      `${apiUrl || "http://localhost:9876"}/relationships/organizations`,
+      `${apiUrl || "http://localhost:9876"}/api/relationships/organizations`,
       {
         method: "GET",
         headers: {
@@ -117,7 +117,7 @@ export const fetchOrganizationDetails = async (
     const response = await fetch(
       `${
         apiUrl || "http://localhost:9876"
-      }/relationships/deadliest-regions?organizationName=${organizationName}`,
+      }/api/relationships/deadliest-regions?organizationName=${organizationName}`,
       {
         method: "GET",
         headers: {
