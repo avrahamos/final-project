@@ -5,12 +5,15 @@ import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 
-import analysisRouter from './routers/analysisRouter'
-import relationshipsRouter from './routers/relationshipsRouter'
+import analysisRouter from "./routers/analysisRouter";
+import relationshipsRouter from "./routers/relationshipsRouter";
+import { setupSocketEvents } from "./socket/io";
 
-dotenv.config()
+dotenv.config();
 
 const PORT = process.env.PORT || 3000;
+
+connectDB();
 
 const app = express();
 
@@ -23,25 +26,18 @@ export const io = new Server(httpServer, {
   },
 });
 
-io.on("connection", (client) => {
-  console.log(`New socket connection: ${client.id}`);
-  client.on("disconnect", () => {
-    console.log(`Client disconnected: ${client.id}`);
-  });
-});
-
-connectDB();
+setupSocketEvents(io);
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/analysis/" , analysisRouter);
+app.use("/api/analysis/", analysisRouter);
 app.use("/api/relationships/", relationshipsRouter);
 
 app.get("/ping", (req: Request, res: Response) => {
   res.status(200).send("pong");
 });
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`   server up and run visit at http://localhost:${PORT}`);
 });
