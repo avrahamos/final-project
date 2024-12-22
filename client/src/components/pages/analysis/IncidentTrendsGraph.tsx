@@ -4,7 +4,7 @@ import {
   mapYearsToGraphData,
   useIncidentTrends,
 } from "../../../hooks/IncidentTrends";
-import Navbar from "../../Navbar";
+import NavbarToIncident from "../../NavbarToIncident";
 import Graph from "../../Graph";
 
 const IncidentTrendsGraph: React.FC = () => {
@@ -42,7 +42,7 @@ const IncidentTrendsGraph: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar
+      <NavbarToIncident
         onSelectYear={handleSelectYear}
         onSelectRange={handleSelectRange}
         onRecentYears={handleRecentYears}

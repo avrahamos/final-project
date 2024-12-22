@@ -7,6 +7,7 @@ import DeadliestAttackGraph from "./pages/analysis/DeadliestAttackGraph";
 import IncidentTrendsGraph from "./pages/analysis/IncidentTrendsGraph";
 import RegionsList from "./pages/relationships/RegionsList";
 import TopGroupsGraph from "./pages/relationships/TopGroupsGraph";
+import GroupsByYearGraph from "./pages/relationships/GroupsByYearGraph";
 
 const AppRouter: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter: React.FC = () => {
       <Route path="/incident-trends" element={<IncidentTrendsGraph />} />
       <Route path="/regions-list" element={<RegionsList />} />
       <Route path="/top-groups" element={<TopGroupsGraph/>} />
+      <Route path="/groups-by-year" element={<GroupsByYearGraph/>}/>
     </Routes>
   );
 };
