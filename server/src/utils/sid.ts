@@ -6,6 +6,7 @@ import { Country } from "../models/country";
 import { Organization } from "../models/groupName";
 import { Year } from "../models/year";
 import { OrganizationImpact } from "../models/regionDamage";
+import { Coordinates } from "../models/coordinates";
 
 export const processJSONFile = async (filePath: string) => {
   try {
@@ -325,6 +326,36 @@ export const aggregateOrganizationImpact = async () => {
     console.error(error);
   }
 };
+
+export const agregateCoordinates = async () => {
+  try {
+    const coordinatesData = await Summary.aggregate([
+      {
+        $match: {
+          latitude: { $ne: null },
+          longitude: { $ne: null },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          latitude: 1,
+          longitude: 1,
+          city: "$city",
+          country: "$country_txt", 
+          region: "$region_txt", 
+        },
+      },
+    ]);
+
+    await Coordinates.insertMany(coordinatesData);
+
+    console.log("Coordinates collection has been populated successfully.");
+  } catch (error) {
+    console.error("Failed to populate coordinates collection:", error);
+  }
+};
+
 
 
 
