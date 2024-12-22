@@ -1,4 +1,4 @@
-import { IRegion, ITopGroup } from "../types/relationShips";
+import { IGroupByYear, IRegion, ITopGroup } from "../types/relationShips";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -52,5 +52,34 @@ export const fetchRegionsList = async (): Promise<IRegion[]> => {
   } catch (error) {
     console.error("Error fetching regions list:", error);
     throw new Error("Unable to fetch regions list. Please try again.");
+  }
+};
+
+export const fetchGroupsByYear = async (
+  year: number
+): Promise<IGroupByYear[]> => {
+  try {
+    const response = await fetch(
+      `${
+        apiUrl || "http://localhost:9876"
+      }/relationships/groups-by-year?year=${year}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Failed to fetch groups by year: ${errorMessage}`);
+    }
+
+    const groups: IGroupByYear[] = await response.json();
+    return groups;
+  } catch (error) {
+    console.error("Error fetching groups by year:", error);
+    throw new Error("Unable to fetch groups by year. Please try again.");
   }
 };

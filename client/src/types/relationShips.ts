@@ -9,3 +9,7 @@ export interface IRegion {
   region: string;
   casualties: number;
 }
+export interface IGroupByYear {
+  gname: string; 
+  totalEvents: number; 
+}

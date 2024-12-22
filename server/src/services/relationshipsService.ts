@@ -5,28 +5,29 @@ export const groupsByYearService = async (year: number) => {
   try {
     const organizations = await Organization.aggregate([
       {
-        $unwind: "$years",
+        $unwind: "$years", 
       },
       {
         $match: {
-          "years.year": year,
-        },
-      },
-      {
-        $project: {
-          gname: 1,
-          events: "$years.events",
+          "years.year": year, 
         },
       },
       {
         $group: {
-          _id: "$gname",
-          totalEvents: { $sum: "$events" },
+          _id: "$gname", 
+          totalEvents: { $sum: "$years.events" }, 
+        },
+      },
+      {
+        $project: {
+          _id: 0, 
+          gname: "$_id", 
+          totalEvents: 1, 
         },
       },
       {
         $sort: {
-          totalEvents: -1,
+          totalEvents: -1, 
         },
       },
     ]);
@@ -34,7 +35,7 @@ export const groupsByYearService = async (year: number) => {
     return organizations;
   } catch (error) {
     console.error(error);
-    throw new Error("Could not fetch");
+    throw new Error("Could not fetch groups by year.");
   }
 };
 
