@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import Navbar from "./Navbar"; 
+import Navbar from "./NavBar";
 
 interface MapProps {
   center: [number, number];
@@ -24,9 +24,8 @@ const ResetView: React.FC<{ center: [number, number] }> = ({ center }) => {
 
 const Map: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const mapProps = location.state as MapProps;
-
-  console.log("Received mapProps:", mapProps);
 
   if (!mapProps) {
     console.error("No mapProps found in location.state");
@@ -36,12 +35,21 @@ const Map: React.FC = () => {
   const { center, zoom, markers } = mapProps;
 
   const handleSelectYear = (year: number) => {
-    console.log(`Year selected: ${year}`);
+    navigate("/groups-by-year", { state: { year } });
+  };
+
+  const handleSelectOrganization = (organization: string) => {
+    navigate("/map-with-regions", {
+      state: { organizationName: organization },
+    });
   };
 
   return (
     <div className="relative">
-      <Navbar onSelectYear={handleSelectYear} />
+      <Navbar
+        onSelectYear={handleSelectYear}
+        onSelectOrganization={handleSelectOrganization}
+      />
 
       <div
         className="pt-16"
