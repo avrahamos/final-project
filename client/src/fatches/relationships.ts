@@ -9,7 +9,7 @@ export const fetchTopGroups = async (
     const res = await fetch(
       `${
         apiUrl || "http://localhost:9876"
-      }/top-groups?region=${encodeURIComponent(regionName)}`,
+      }/relationships/top-groups?region=${encodeURIComponent(regionName)}`,
       {
         method: "GET",
         headers: {
@@ -33,7 +33,7 @@ export const fetchTopGroups = async (
 export const fetchRegionsList = async (): Promise<IRegion[]> => {
   try {
     const res = await fetch(
-      `${apiUrl || "http://localhost:9876"}/regions-list`,
+      `${apiUrl || "http://localhost:9876"}/relationships/regions-list`,
       {
         method: "GET",
         headers: {
