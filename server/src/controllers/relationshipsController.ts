@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   deadliestRegionsService,
+  getAllOrganizationsService,
   getRegionsListService,
   groupsByYearService,
   topGroupsService,
@@ -64,7 +65,17 @@ export const getRegionsList = async (req: Request, res: Response) => {
     const regions = await getRegionsListService();
     res.status(200).json(regions);
   } catch (error) {
-    console.error("error in getRegionsList", error);
-    res.status(500).json({ error: "Failed to fetch regions list." });
+    console.error(error);
+    res.status(500).json({ error});
+  }
+};
+
+export const getAllOrganizations = async (req: Request, res: Response) => {
+  try {
+    const organizationNames = await getAllOrganizationsService();
+    res.status(200).json(organizationNames);
+  } catch (error) {
+    console.error("Error fetching organization names:", error);
+    res.status(500).json({ error: "Failed to fetch organization names." });
   }
 };

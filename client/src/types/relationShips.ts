@@ -13,3 +13,10 @@ export interface IGroupByYear {
   gname: string; 
   totalEvents: number; 
 }
+
+export interface IRegionDetails {
+  region: string;
+  casualties: number;
+  latitude: number;
+  longitude: number;
+}

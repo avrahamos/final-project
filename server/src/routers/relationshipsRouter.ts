@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deadliestRegions, getRegionsList, groupsByYear, topGroups } from "../controllers/relationshipsController";
+import { deadliestRegions, getAllOrganizations, getRegionsList, groupsByYear, topGroups } from "../controllers/relationshipsController";
 
 const router = Router()
 
@@ -11,6 +11,6 @@ router.get("/deadliest-regions", deadliestRegions);
 
 router.get("/top-groups", topGroups);
 
-
+router.get("/organizations", getAllOrganizations);
 
 export default router

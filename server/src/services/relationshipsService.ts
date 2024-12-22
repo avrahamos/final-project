@@ -137,3 +137,16 @@ export const getRegionsListService = async () => {
     throw new Error("Unable to fetch regions list.");
   }
 };
+
+export const getAllOrganizationsService = async (): Promise<string[]> => {
+  try {
+    const organizationNames = await Organization.distinct("gname", {
+      gname: { $nin: ["Unknown", null] },
+    });
+
+    return organizationNames;
+  } catch (error) {
+    console.error(error);
+    throw new Error("failed to fetch");
+  }
+};

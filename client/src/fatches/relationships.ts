@@ -1,4 +1,4 @@
-import { IGroupByYear, IRegion, ITopGroup } from "../types/relationShips";
+import { IGroupByYear, IRegion, IRegionDetails, ITopGroup } from "../types/relationShips";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -30,6 +30,37 @@ export const fetchTopGroups = async (
     throw new Error("Unable to fetch top groups. Please try again.");
   }
 };
+
+export const fetchGroupsByYear = async (
+  year: number
+): Promise<IGroupByYear[]> => {
+  try {
+    const response = await fetch(
+      `${
+        apiUrl || "http://localhost:9876"
+      }/relationships/groups-by-year?year=${year}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`failed to fetch groups by year: ${errorMessage}`);
+    }
+
+    const groups: IGroupByYear[] = await response.json();
+    return groups;
+  } catch (error) {
+    console.error("Error fetching groups by year:", error);
+    throw new Error("unable to fetch please try again");
+  }
+};
+
+
 export const fetchRegionsList = async (): Promise<IRegion[]> => {
   try {
     const res = await fetch(
@@ -50,19 +81,15 @@ export const fetchRegionsList = async (): Promise<IRegion[]> => {
     const regions: IRegion[] = await res.json();
     return regions;
   } catch (error) {
-    console.error("Error fetching regions list:", error);
-    throw new Error("Unable to fetch regions list. Please try again.");
+    console.error(error);
+    throw new Error("unable to fetch please try again");
   }
 };
 
-export const fetchGroupsByYear = async (
-  year: number
-): Promise<IGroupByYear[]> => {
+export const fetchOrganizations = async (): Promise<string[]> => {
   try {
     const response = await fetch(
-      `${
-        apiUrl || "http://localhost:9876"
-      }/relationships/groups-by-year?year=${year}`,
+      `${apiUrl || "http://localhost:9876"}/relationships/organizations`,
       {
         method: "GET",
         headers: {
@@ -73,13 +100,40 @@ export const fetchGroupsByYear = async (
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      throw new Error(`Failed to fetch groups by year: ${errorMessage}`);
+      throw new Error(`Failed to fetch organizations: ${errorMessage}`);
     }
 
-    const groups: IGroupByYear[] = await response.json();
-    return groups;
+    return response.json();
   } catch (error) {
-    console.error("Error fetching groups by year:", error);
-    throw new Error("Unable to fetch groups by year. Please try again.");
+    console.error(error);
+    throw new Error("unable to fetch or please try again");
+  }
+};
+
+export const fetchOrganizationDetails = async (
+  organizationName: string
+): Promise<IRegionDetails[]> => {
+  try {
+    const response = await fetch(
+      `${
+        apiUrl || "http://localhost:9876"
+      }/relationships/deadliest-regions?organizationName=${organizationName}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`failed to fetch organization details: ${errorMessage}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error(error);
+    throw new Error("unable to fetch please try again");
   }
 };
