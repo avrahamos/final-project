@@ -12,7 +12,7 @@ export const setupSocketEvents = (io: Server) => {
         client.emit("coordinatesList", coordinates); 
       } catch (error) {
         console.error( error);
-        client.emit("error", "Failed to fetch coordinates");
+        client.emit("error", "failed to fetch coordinates");
       }
     });
 
@@ -23,7 +23,7 @@ export const setupSocketEvents = (io: Server) => {
         client.emit("searchResults", results); 
       } catch (error) {
         console.error( error);
-        client.emit("error", "Failed to search coordinates");
+        client.emit("error", "failed to search coordinates");
       }
     });
     client.on("disconnect", () => {
