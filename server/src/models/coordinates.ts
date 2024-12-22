@@ -4,8 +4,8 @@ import { Document, model, Schema } from "mongoose";
   latitude: number;
   longitude: number;
   city?: string;
-  country: string;
-  region: string;
+  country?: string;
+  region?: string;
 }
 
 
