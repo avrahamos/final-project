@@ -154,26 +154,40 @@ import { Year } from "../models/year";
 };
 
  const updateOrganization = async (summary: ISummary) => {
-  const { gname, TotalAmount, iyear } = summary;
+   const { gname, TotalAmount, iyear } = summary;
 
-  const casualtiesCount = TotalAmount || 0; 
+   const casualtiesCount = TotalAmount || 0;
 
-  await Organization.updateOne(
-    { gname },
-    {
-      $inc: { totalCasualties: casualtiesCount }, 
-      $addToSet: {
-        years: {
-          year: iyear,
-          events: 1, 
-        },
-      },
-    },
-    { upsert: true } 
-  );
+   const organization = await Organization.findOne({
+     gname,
+     "years.year": iyear,
+   });
 
-  await addRegionToOrganization(summary);
-};
+   if (organization) {
+     await Organization.updateOne(
+       { gname, "years.year": iyear },
+       {
+         $inc: { totalCasualties: casualtiesCount, "years.$.events": 1 }, 
+       }
+     );
+   } else {
+     await Organization.updateOne(
+       { gname },
+       {
+         $inc: { totalCasualties: casualtiesCount }, 
+         $push: {
+           years: {
+             year: iyear,
+             events: 1,
+           },
+         },
+       },
+       { upsert: true }
+     );
+   }
+
+   await addRegionToOrganization(summary);
+ };
 
  const addRegionToImpact = async (summary: ISummary) => {
   const { gname, region_txt, TotalAmount, latitude, longitude } = summary;
@@ -220,7 +234,7 @@ const updateOrganizationImpact = async (summary: ISummary) => {
   await addRegionToImpact(summary);
 };
 
-const isValidDate = (year: number, month: number, day: number): boolean => {
+export const isValidDate = (year: number, month: number, day: number): boolean => {
 
     const date = new Date(year, month - 1, day);
 
@@ -231,7 +245,7 @@ const isValidDate = (year: number, month: number, day: number): boolean => {
   );
 };
 
-const isFutureDate = (year: number, month: number, day: number): boolean => {
+export const isFutureDate = (year: number, month: number, day: number): boolean => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1; 

@@ -1,8 +1,14 @@
-import { Request, Response } from "express";
 import { ISummary, Summary } from "../models/summary";
 import { IAddEventDto } from "../types/dto";
 import { dateConverter, generateEventId } from "../utils/addEventUtils";
-import { updateAllCollections } from "../utils/crud";
+import {  updateAllCollections } from "../utils/crud";
+
+const isFutureDate = (date: Date): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); 
+  return date > today; 
+};
+
 
 export const createNewEvent = async (
   addEventDto: IAddEventDto
@@ -25,7 +31,14 @@ export const createNewEvent = async (
       summary,
     } = addEventDto;
     const id = generateEventId(date);
+    const validDate = isFutureDate(date);
+
+    if (!validDate) {
+      console.log("invalid date");
+      return;
+    }
     const { iyear, imonth, iday } = dateConverter(date);
+    
     const newEvent = new Summary({
       eventid: id,
       iyear,
@@ -52,7 +65,7 @@ export const createNewEvent = async (
     }
 
     await newEvent.save();
-    console.log(newEvent);
+
     return newEvent;
   } catch (error) {
     throw new Error("register failed");

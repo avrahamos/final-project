@@ -10,7 +10,7 @@ export const fetchAllCoordinates = () => {
 export const onCoordinatesList = (callback: (data: any) => void) => {
   if (socket) {
     socket.on("coordinatesList", (data) => {
-      console.log("Received coordinates list:", data.slice(0, 20));
+
       callback(data);
     });
   }

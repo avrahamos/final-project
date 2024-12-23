@@ -13,6 +13,8 @@ import { ICoordinate } from "../../../../types/socket";
 const Dashboard: React.FC = () => {
   const [coordinates, setCoordinates] = useState<ICoordinate[]>([]);
   const [showSearch, setShowSearch] = useState(true);
+
+  
   useEffect(() => {
     connectSocket();
     return () => {
