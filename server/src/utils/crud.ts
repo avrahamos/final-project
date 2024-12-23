@@ -1,6 +1,7 @@
 import { AttackType } from "../models/atackType";
 import { Coordinates } from "../models/coordinates";
 import { Country } from "../models/country";
+import { Organization } from "../models/groupName";
 import { ISummary } from "../models/summary";
 
 export const updateAttackType = async (summary: ISummary) => {
@@ -127,3 +128,47 @@ export const handleCountryAndCity = async (summary: ISummary) => {
   }
 };
 
+export const addRegionToOrganization = async (summary: ISummary) => {
+  const { gname, region_txt, TotalAmount } = summary;
+
+  const casualtiesCount = TotalAmount || 0;
+
+  const organization = await Organization.findOne({ gname });
+
+  const regionExists = organization?.regions.some(
+    (region ) => region.region === region_txt
+  );
+
+  if (!regionExists) {
+    await Organization.updateOne(
+      { gname },
+      {
+        $push: {
+          regions: { region: region_txt, casualties: casualtiesCount },
+        },
+      }
+    );
+  }
+};
+
+export const updateOrganization = async (summary: ISummary) => {
+  const { gname, TotalAmount, iyear } = summary;
+
+  const casualtiesCount = TotalAmount || 0; 
+
+  await Organization.updateOne(
+    { gname },
+    {
+      $inc: { totalCasualties: casualtiesCount }, 
+      $addToSet: {
+        years: {
+          year: iyear,
+          events: 1, 
+        },
+      },
+    },
+    { upsert: true } 
+  );
+
+  await addRegionToOrganization(summary);
+};
