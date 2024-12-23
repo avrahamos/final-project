@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { getAllCoordinates, searchCountries } from "../services/readLocationService";
+import { getAllCoordinates, searchCountries } from "../services/coordinetsService";
 
 
 export const setupSocketEvents = (io: Server) => {
