@@ -2,6 +2,7 @@ import { AttackType } from "../models/atackType";
 import { Coordinates } from "../models/coordinates";
 import { Country } from "../models/country";
 import { Organization } from "../models/groupName";
+import { OrganizationImpact } from "../models/regionDamage";
 import { ISummary } from "../models/summary";
 
 export const updateAttackType = async (summary: ISummary) => {
@@ -171,4 +172,49 @@ export const updateOrganization = async (summary: ISummary) => {
   );
 
   await addRegionToOrganization(summary);
+};
+
+export const addRegionToImpact = async (summary: ISummary) => {
+  const { gname, region_txt, TotalAmount, latitude, longitude } = summary;
+
+  const casualtiesCount = TotalAmount || 0; 
+
+  const organization = await OrganizationImpact.findOne({ gname });
+
+  const regionExists = organization?.regions.some(
+    (region) => region.region === region_txt
+  );
+
+  if (!regionExists) {
+    await OrganizationImpact.updateOne(
+      { gname },
+      {
+        $push: {
+          regions: {
+            region: region_txt,
+            casualties: casualtiesCount,
+            latitude,
+            longitude,
+          },
+        },
+      },
+      { upsert: true } 
+    );
+  }
+};
+
+export const updateOrganizationImpact = async (summary: ISummary) => {
+  const { gname, region_txt, TotalAmount, latitude, longitude } = summary;
+
+  const casualtiesCount = TotalAmount || 0; 
+
+  await OrganizationImpact.updateOne(
+    { gname, "regions.region": region_txt },
+    {
+      $inc: { "regions.$.casualties": casualtiesCount }, 
+    },
+    { upsert: false } 
+  );
+
+  await addRegionToImpact(summary);
 };
