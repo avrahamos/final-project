@@ -50,7 +50,7 @@ const DashboardMap: React.FC<DashboardMapProps> = ({
   center,
   zoom,
   markers,
-  onMapClick,
+
 }) => {
   const [formVisible, setFormVisible] = useState(false);
   const [clickedCoordinates, setClickedCoordinates] = useState<

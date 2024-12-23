@@ -37,7 +37,7 @@ const Search: React.FC = () => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Search by city, country, or region..."
+          placeholder="Search by country..."
           value={query}
           onChange={handleInputChange}
           className="w-full p-2 text-center text-gray-800 placeholder-gray-400 bg-transparent border-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:placeholder-gray-800"
