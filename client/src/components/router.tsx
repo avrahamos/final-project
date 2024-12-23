@@ -9,7 +9,7 @@ import RegionsList from "./pages/relationships/RegionsList";
 import TopGroupsGraph from "./pages/relationships/TopGroupsGraph";
 import GroupsByYearGraph from "./pages/relationships/GroupsByYearGraph";
 import MapWithRegions from "./pages/relationships/MapWithRegions";
-import Dashboard from "./pages/socket/Dashboard";
+import Dashboard from "./pages/socket/dashboard/Dashboard";
 
 const AppRouter: React.FC = () => {
   return (
