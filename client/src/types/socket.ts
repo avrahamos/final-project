@@ -11,7 +11,17 @@ export interface ICoordinate {
 export interface ISearchResult {
   city?: string;
   country?: string;
-  region?: string;
   latitude: number;
   longitude: number;
+}
+
+export interface CityData {
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface CountryData {
+  country: string;
+  cities: CityData[];
 }

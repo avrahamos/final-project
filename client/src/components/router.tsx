@@ -10,6 +10,7 @@ import TopGroupsGraph from "./pages/relationships/TopGroupsGraph";
 import GroupsByYearGraph from "./pages/relationships/GroupsByYearGraph";
 import MapWithRegions from "./pages/relationships/MapWithRegions";
 import Dashboard from "./pages/socket/dashboard/Dashboard";
+import CountryMap from "./pages/socket/dashboard/CountryMap";
 
 const AppRouter: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const AppRouter: React.FC = () => {
       <Route path="/top-groups" element={<TopGroupsGraph />} />
       <Route path="/groups-by-year" element={<GroupsByYearGraph />} />
       <Route path="/map-with-regions" element={<MapWithRegions />} />
+      <Route path="country-map" element={<CountryMap/>}/>
     </Routes>
   );
 };

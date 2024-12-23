@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { ISearchResult } from "../../../../types/socket";
 import { onSearchResults, searchCountries } from "../../../../socket/dashboard";
+import { useNavigate } from "react-router-dom";
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ISearchResult[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const navigate = useNavigate()
 
   useEffect(() => {
     onSearchResults((data) => {
@@ -27,6 +29,7 @@ const Search: React.FC = () => {
 
   const handleResultClick = (result: ISearchResult) => {
     console.log("Selected location:", result);
+     navigate("/country-map", { state: result });
   };
 
   return (
