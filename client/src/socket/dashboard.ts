@@ -16,20 +16,16 @@ export const onCoordinatesList = (callback: (data: any) => void) => {
   }
 };
 
-export const searchCoordinates = (query: {
-  city?: string;
-  country?: string;
-  region?: string;
-}) => {
+export const searchCountries = (query: { country?: string }) => {
   if (socket) {
-    socket.emit(EVENTS.Search_Coordinates, query);
+    socket.emit(EVENTS.search_Countries, query);
   }
 };
 
 export const onSearchResults = (callback: (data: any) => void) => {
   if (socket) {
     socket.on("searchResults", (data) => {
-      console.log("Received search results:", data);
+      console.log("Received search results:", data.slice(0, 20));
       callback(data);
     });
   }
@@ -38,6 +34,6 @@ export const onSearchResults = (callback: (data: any) => void) => {
 export const disconnectListeners = (): void => {
   if (socket) {
     socket.off(EVENTS.Get_All_Coordinates);
-    socket.off(EVENTS.Search_Coordinates);
+    socket.off(EVENTS.search_Countries);
   }
 };

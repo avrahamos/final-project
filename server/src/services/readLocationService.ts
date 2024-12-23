@@ -28,21 +28,45 @@ export const getAllCoordinates = async () => {
 };
 
 
-export const searchCoordinates = async (query: {
-  city?: string;
-  country?: string;
-  region?: string;
-}) => {
+export const searchCountries = async (query: { country?: string }) => {
   try {
-    const filter: any = {};
-    if (query.city) filter.city = { $regex: query.city, $options: "i" };
-    if (query.country)
-      filter.country = { $regex: query.country, $options: "i" };
-    if (query.region) filter.region = { $regex: query.region, $options: "i" };
+    const match: any = {};
+    if (query.country) match.country = { $regex: query.country, $options: "i" };
 
-    return await Coordinates.find(filter).limit(20); 
+    const results = await Coordinates.aggregate([
+      { $match: match }, 
+      {
+        $group: {
+          _id: { country: "$country", city: "$city" }, 
+          latitude: { $first: "$latitude" }, 
+          longitude: { $first: "$longitude" }, 
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.country", 
+          cities: {
+            $push: {
+              city: "$_id.city",
+              latitude: "$latitude",
+              longitude: "$longitude",
+            },
+          }, 
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          country: "$_id", 
+          cities: 1, 
+        },
+      },
+      { $limit: 50 }, 
+    ]);
+
+    return results;
   } catch (error) {
-    console.error( error);
+    console.error(error);
     throw new Error("failed to search");
   }
 };

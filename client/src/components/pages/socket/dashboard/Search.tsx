@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ISearchResult } from "../../../../types/socket";
-import { onSearchResults, searchCoordinates } from "../../../../socket/dashboard";
+import { onSearchResults, searchCountries } from "../../../../socket/dashboard";
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -9,7 +9,7 @@ const Search: React.FC = () => {
 
   useEffect(() => {
     onSearchResults((data) => {
-      setResults(data); 
+      setResults(data);
     });
   }, []);
 
@@ -19,7 +19,7 @@ const Search: React.FC = () => {
 
     if (value.trim() !== "") {
       setIsTyping(true);
-      searchCoordinates({ city: value, country: value, region: value });
+      searchCountries({ country: value });
     } else {
       setResults([]);
     }
@@ -53,10 +53,7 @@ const Search: React.FC = () => {
               onClick={() => handleResultClick(result)}
               className="p-2 text-blue-500 cursor-pointer hover:bg-blue-50"
             >
-              {result.city ||
-                result.region ||
-                result.country ||
-                "Unknown Location"}
+              {result.country || "Unknown Location"}
             </li>
           ))}
         </ul>

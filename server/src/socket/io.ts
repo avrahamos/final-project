@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { getAllCoordinates, searchCoordinates } from "../services/readLocationService";
+import { getAllCoordinates, searchCountries } from "../services/readLocationService";
 
 
 export const setupSocketEvents = (io: Server) => {
@@ -17,12 +17,12 @@ export const setupSocketEvents = (io: Server) => {
     });
 
 
-    client.on("searchCoordinates", async (query) => {
+    client.on("searchCountries", async (query) => {
       try {
-        const results = await searchCoordinates(query); 
-        client.emit("searchResults", results); 
+        const results = await searchCountries(query);
+        client.emit("searchResults", results);
       } catch (error) {
-        console.error( error);
+        console.error(error);
         client.emit("error", "failed to search coordinates");
       }
     });
