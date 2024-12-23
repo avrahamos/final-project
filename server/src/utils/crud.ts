@@ -4,8 +4,9 @@ import { Country } from "../models/country";
 import { Organization } from "../models/groupName";
 import { OrganizationImpact } from "../models/regionDamage";
 import { ISummary } from "../models/summary";
+import { Year } from "../models/year";
 
-export const updateAttackType = async (summary: ISummary) => {
+ const updateAttackType = async (summary: ISummary) => {
   const { attacktype1_txt, nkill, nwound, TotalAmount } = summary;
 
   await AttackType.updateOne(
@@ -21,7 +22,7 @@ export const updateAttackType = async (summary: ISummary) => {
   );
 };
 
-export const updateCoordinates = async (summary: ISummary) => {
+ const updateCoordinates = async (summary: ISummary) => {
   const { latitude, longitude, city, country_txt, region_txt } = summary;
 
   await Coordinates.updateOne(
@@ -33,7 +34,7 @@ export const updateCoordinates = async (summary: ISummary) => {
   );
 };
 
-export const createCountryAndCity = async (summary: ISummary) => {
+ const createCountryAndCity = async (summary: ISummary) => {
   const { country_txt, city, latitude, longitude, nkill, nwound } = summary;
 
   const casualties = (nkill || 0) + (nwound || 0);
@@ -57,7 +58,7 @@ export const createCountryAndCity = async (summary: ISummary) => {
   });
 };
 
-export const updateCityInCountry = async (summary: ISummary) => {
+ const updateCityInCountry = async (summary: ISummary) => {
   const { country_txt, city, latitude, longitude, nkill, nwound } = summary;
 
   const casualties = (nkill || 0) + (nwound || 0);
@@ -81,7 +82,7 @@ export const updateCityInCountry = async (summary: ISummary) => {
   );
 };
 
-export const addCityToCountry = async (summary: ISummary) => {
+ const addCityToCountry = async (summary: ISummary) => {
   const { country_txt, city, latitude, longitude, nkill, nwound } = summary;
 
   const casualties = (nkill || 0) + (nwound || 0);
@@ -108,7 +109,7 @@ export const addCityToCountry = async (summary: ISummary) => {
 };
 
 
-export const handleCountryAndCity = async (summary: ISummary) => {
+ const handleCountryAndCity = async (summary: ISummary) => {
   const { country_txt, city } = summary;
 
   const country = await Country.findOne({ country: country_txt });
@@ -129,7 +130,7 @@ export const handleCountryAndCity = async (summary: ISummary) => {
   }
 };
 
-export const addRegionToOrganization = async (summary: ISummary) => {
+ const addRegionToOrganization = async (summary: ISummary) => {
   const { gname, region_txt, TotalAmount } = summary;
 
   const casualtiesCount = TotalAmount || 0;
@@ -152,7 +153,7 @@ export const addRegionToOrganization = async (summary: ISummary) => {
   }
 };
 
-export const updateOrganization = async (summary: ISummary) => {
+ const updateOrganization = async (summary: ISummary) => {
   const { gname, TotalAmount, iyear } = summary;
 
   const casualtiesCount = TotalAmount || 0; 
@@ -174,7 +175,7 @@ export const updateOrganization = async (summary: ISummary) => {
   await addRegionToOrganization(summary);
 };
 
-export const addRegionToImpact = async (summary: ISummary) => {
+ const addRegionToImpact = async (summary: ISummary) => {
   const { gname, region_txt, TotalAmount, latitude, longitude } = summary;
 
   const casualtiesCount = TotalAmount || 0; 
@@ -203,7 +204,7 @@ export const addRegionToImpact = async (summary: ISummary) => {
   }
 };
 
-export const updateOrganizationImpact = async (summary: ISummary) => {
+const updateOrganizationImpact = async (summary: ISummary) => {
   const { gname, region_txt, TotalAmount, latitude, longitude } = summary;
 
   const casualtiesCount = TotalAmount || 0; 
@@ -217,4 +218,129 @@ export const updateOrganizationImpact = async (summary: ISummary) => {
   );
 
   await addRegionToImpact(summary);
+};
+
+const isValidDate = (year: number, month: number, day: number): boolean => {
+
+    const date = new Date(year, month - 1, day);
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
+const isFutureDate = (year: number, month: number, day: number): boolean => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; 
+  const currentDay = currentDate.getDate();
+
+  return (
+    year > currentYear ||
+    (year === currentYear && month > currentMonth) ||
+    (year === currentYear && month === currentMonth && day > currentDay)
+  );
+};
+
+ const updateMonth = async (summary: ISummary) => {
+  const { iyear, imonth } = summary;
+
+  await Year.updateOne(
+    { year: iyear, "months.month": imonth },
+    {
+      $inc: {
+        "months.$.eventsNum": 1, 
+        totalEvents: 1, 
+      },
+    }
+  );
+};
+
+ const addMonthToYear = async (summary: ISummary) => {
+  const { iyear, imonth } = summary;
+
+  await Year.updateOne(
+    { year: iyear },
+    {
+      $push: {
+        months: {
+          month: imonth,
+          eventsNum: 1, 
+        },
+      },
+      $inc: { totalEvents: 1 }, 
+    }
+  );
+};
+
+ const createYearWithMonth = async (summary: ISummary) => {
+  const { iyear, imonth } = summary;
+
+  const newYear = await Year.create({
+    year: iyear,
+    months: [
+      {
+        month: imonth,
+        eventsNum: 1, 
+      },
+    ],
+    totalEvents: 1, 
+  });
+
+  return newYear;
+};
+
+ const updateYear = async (summary: ISummary) => {
+  const iyear = summary.iyear ?? 0;
+  const imonth = summary.imonth ?? 0;
+  const iday = summary.iday ?? 0;
+
+  if (!isValidDate(iyear, imonth, iday)) {
+    throw new Error(
+      "invalid date"
+    );
+  }
+
+  if (isFutureDate(iyear, imonth, iday)) {
+    throw new Error("cannot add events to future dates");
+  }
+
+  let year = await Year.findOne({ year: iyear });
+
+  if (!year) {
+
+    year = await createYearWithMonth(summary);
+  } else {
+
+    const monthExists = year.months.some((month) => month.month === imonth);
+
+    if (!monthExists) {
+
+        await addMonthToYear(summary);
+    } else {
+
+        await updateMonth(summary);
+    }
+  }
+};
+
+export const updateAllCollections = async (summary: any) => {
+  try {
+
+    await Promise.all([
+      updateAttackType(summary), 
+      updateCoordinates(summary), 
+      handleCountryAndCity(summary), 
+      updateOrganization(summary), 
+      updateOrganizationImpact(summary), 
+      updateYear(summary),
+    ]);
+
+    console.log("all collections updated successfully!");
+  } catch (error) {
+    console.error("error updating collections:", error);
+    throw new Error("failed to update all collections.");
+  }
 };
