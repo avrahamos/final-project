@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { getAllCoordinates, searchCountries } from "../services/coordinetsService";
+import { getAllCoordinates, searchByCityPrefix, searchCountries } from "../services/coordinetsService";
 
 export const setupCoordinatesEvents = (client: Socket) => {
   client.on("getAllCoordinates", async () => {
@@ -18,6 +18,19 @@ export const setupSearchEvents = (client: Socket) => {
     try {
       const results = await searchCountries(query);
       client.emit("searchResults", results);
+    } catch (error) {
+      console.error(error);
+      client.emit("error", "failed to search coordinates");
+    }
+  });
+};
+
+
+export const setupSearchCities = (client: Socket) => {
+  client.on("SearchCities", async (countryName:string, query) => {
+    try {
+      const results = await searchByCityPrefix(countryName , query);
+      client.emit("searchCityResults", results);
     } catch (error) {
       console.error(error);
       client.emit("error", "failed to search coordinates");
