@@ -25,3 +25,25 @@ export interface CountryData {
   country: string;
   cities: CityData[];
 }
+
+export interface ISummaryResult{
+  eventid?: number;
+  iyear?: number;
+  imonth?: number;
+  iday?: number;
+  country_txt?: string;
+  region_txt?: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  attacktype1_txt?: string;
+  gname?: string;
+  nkill?: number;
+  nwound?: number;
+  TotalAmount?: number;
+  targtype1_txt?: string;
+  target1?: string;
+  weaptype1_txt?: string;
+  nperps?: number;
+  summary?: string;
+}

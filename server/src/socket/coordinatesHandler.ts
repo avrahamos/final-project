@@ -29,6 +29,7 @@ export const setupSearchEvents = (client: Socket) => {
 export const setupSearchCities = (client: Socket) => {
   client.on("SearchCities", async (countryName:string, query) => {
     try {
+      console.log(countryName,"socket server")
       const results = await searchByCityPrefix(countryName , query);
       client.emit("searchCityResults", results);
     } catch (error) {

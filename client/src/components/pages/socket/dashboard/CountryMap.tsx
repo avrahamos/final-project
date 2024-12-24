@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DashboardMap from "./DashboardMap";
-import Search from "./Search";
 import { useLocation } from "react-router-dom";
 import { CityData, CountryData } from "../../../../types/socket";
+import SearchCities from "./SearchCities";
 
 
 const CountryMap: React.FC = () => {
@@ -38,7 +38,7 @@ const CountryMap: React.FC = () => {
             -
           </button>
           <div className="relative">
-            <Search />
+            <SearchCities />
           </div>
         </div>
       )}
