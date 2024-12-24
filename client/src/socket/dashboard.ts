@@ -25,7 +25,6 @@ export const searchCountries = (query: { country?: string }) => {
 export const onSearchResults = (callback: (data: any) => void) => {
   if (socket) {
     socket.on("searchResults", (data) => {
-      console.log("Received search results:", data.slice(0, 20));
       callback(data);
     });
   }

@@ -352,7 +352,6 @@ export const updateAllCollections = async (summary: any) => {
       updateYear(summary),
     ]);
 
-    console.log("all collections updated successfully");
     return {succses:true}
   } catch (error) {
     console.error("error updating collections:", error);

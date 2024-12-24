@@ -36,7 +36,6 @@ const AddEvent: React.FC<{
     try {
       const response = await emitAddEvent(formData);
       alert("Event added successfully!");
-      console.log("Added event:", response);
       onClose();
     } catch (err) {
       alert("failed to add event: " + err);

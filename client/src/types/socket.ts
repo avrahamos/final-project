@@ -27,6 +27,7 @@ export interface CountryData {
 }
 
 export interface ISummaryResult{
+  _id?:string
   eventid?: number;
   iyear?: number;
   imonth?: number;

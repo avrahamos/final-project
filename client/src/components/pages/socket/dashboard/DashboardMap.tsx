@@ -83,9 +83,13 @@ const DashboardMap: React.FC<DashboardMapProps> = ({
           <Marker
             key={index}
             position={[marker.latitude, marker.longitude]}
-            eventHandlers={{
-              click: marker.onClick, 
-            }}
+            eventHandlers={
+              marker.onClick
+                ? {
+                    click: marker.onClick, 
+                  }
+                : undefined 
+            }
           >
             {marker.popupText && <Popup>{marker.popupText}</Popup>}
           </Marker>

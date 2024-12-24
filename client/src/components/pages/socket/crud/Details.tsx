@@ -1,19 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ISummaryResult, IUpdateEventDto } from "../../../../types/socket";
 import { FIELD_LABELS } from "../../../../types/addNewEvent";
+import { deleteEvent, updateSummary } from "../../../../socket/updateDelete";
+import { connectSocket } from "../../../../socket/appIo";
+import { disconnectListeners } from "../../../../socket/dashboard";
 
 interface DetailsProps {
   eventDetails: ISummaryResult;
-  onDelete: () => void;
+  onClose: () => void;
+  onDelete: (id: string) => void;
   onUpdate: (updatedEvent: IUpdateEventDto) => void;
 }
 
-
-const Details: React.FC<DetailsProps> = ({
-  eventDetails,
-  onDelete,
-  onUpdate,
-}) => {
+const Details: React.FC<DetailsProps> = ({ eventDetails, onClose }) => {
   const [editableFields, setEditableFields] = useState<IUpdateEventDto>({});
   const [isEditing, setIsEditing] = useState(false);
 
@@ -23,10 +22,23 @@ const Details: React.FC<DetailsProps> = ({
   ) => {
     setEditableFields({ ...editableFields, [field]: value });
   };
+  useEffect(() => {
+    connectSocket();
+    return () => {
+    disconnectListeners()
+    };
+  }, []);
 
   const handleUpdateClick = () => {
     if (isEditing) {
-      onUpdate(editableFields);
+      updateSummary(eventDetails._id!, editableFields, (response) => {
+        if (response.success) {
+          setEditableFields({});
+          onClose();
+        } else {
+          console.error("Failed to update event:", response.message);
+        }
+      });
     } else {
       const initialEditableFields: IUpdateEventDto = {};
       Object.keys(FIELD_LABELS).forEach((key) => {
@@ -40,6 +52,17 @@ const Details: React.FC<DetailsProps> = ({
       setEditableFields(initialEditableFields);
     }
     setIsEditing(!isEditing);
+  };
+
+  const handleDeleteClick = () => {
+    deleteEvent(eventDetails._id!, (response) => {
+      console.log(eventDetails._id, "_id"); 
+      if (response.success) {
+        onClose();
+      } else {
+        console.error( response.message);
+      }
+    });
   };
 
   return (
@@ -88,7 +111,7 @@ const Details: React.FC<DetailsProps> = ({
           {isEditing ? "Send" : "Update"}
         </button>
         <button
-          onClick={onDelete}
+          onClick={handleDeleteClick}
           className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium"
         >
           Delete

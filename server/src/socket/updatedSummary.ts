@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { IUpdateEventDto } from "../types/dto";
-import { updateSummaryById } from "../services/updateEventService";
+import { DeleteSummaryById, updateSummaryById } from "../services/updateEventService";
 
 export const setUpUpdateEvent = (client: Socket) => {
   client.on(
@@ -40,3 +40,35 @@ export const setUpUpdateEvent = (client: Socket) => {
     }
   );
 };
+
+export const SetupDelelteEvent = (client: Socket) => {
+  client.on("delelteEvent", async (id: string , callback) => {
+    try {
+       if (!id) {
+         return callback({
+           success: false,
+           message: "invalid id",
+         });
+       }
+       const delelteEvent = await DeleteSummaryById(id)
+       if (!delelteEvent) {
+         return callback({
+           success: false,
+           message: "summary not found",
+         });
+       }
+       callback({
+         success: true,
+         data: delelteEvent,
+       });
+
+    } catch (error) {
+       console.error(error);
+       callback({
+         success: false,
+         message: "not update summar",
+         error: error,
+       });
+    }
+  });}
+  

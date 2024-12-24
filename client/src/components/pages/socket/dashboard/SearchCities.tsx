@@ -14,9 +14,7 @@ const SearchCities: React.FC<{ onCityClick: (cityData: any) => void }> = ({
   const [isTyping, setIsTyping] = useState(false);
 
   const location = useLocation() as unknown as { state: { country: string } };
-  console.log("Location State:", location?.state);
   const countryName = location?.state?.country || "";
-  console.log(countryName);
 
 
   useEffect(() => {
@@ -38,7 +36,6 @@ const SearchCities: React.FC<{ onCityClick: (cityData: any) => void }> = ({
   };
 
   const handleResultClick = (result: ISummaryResult) => {
-    console.log("Selected location:", JSON.stringify(result));
      onCityClick(result);
   };
 

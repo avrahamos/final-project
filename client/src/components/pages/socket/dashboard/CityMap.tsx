@@ -18,18 +18,16 @@ const CityMap: React.FC = () => {
   const events = cityData.documents.map((doc) => ({
     latitude: doc.latitude,
     longitude: doc.longitude,
-    onClick: () => setSelectedEvent(doc), 
+    onClick: () => setSelectedEvent(doc),
   }));
 
   const center: [number, number] = [events[0].latitude, events[0].longitude];
 
   const handleDelete = () => {
-    console.log("Deleted event:", selectedEvent);
     setSelectedEvent(null);
   };
 
   const handleUpdate = (updatedEvent: any) => {
-    console.log("Updated event:", updatedEvent);
     setSelectedEvent(null);
   };
 
@@ -41,6 +39,7 @@ const CityMap: React.FC = () => {
         <div className="absolute top-10 left-10 z-50 bg-white shadow-lg rounded-lg p-4 w-96">
           <Details
             eventDetails={selectedEvent}
+            onClose={() => setSelectedEvent(null)}
             onDelete={handleDelete}
             onUpdate={handleUpdate}
           />

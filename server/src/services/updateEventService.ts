@@ -14,7 +14,7 @@ export const updateSummaryById = async (
     const isUpdate = await updateAllCollections(summary);
     if (!isUpdate) {
       console.error("filde update all collections");
-      return null
+      return null;
     }
 
     const fieldsToUpdate = Object.fromEntries(
@@ -28,5 +28,19 @@ export const updateSummaryById = async (
   } catch (error) {
     console.error("Error updating summary:", error);
     throw new Error("Could not update summary.");
+  }
+};
+
+export const DeleteSummaryById = async (id: string) => {
+  try {
+    const summary = await Summary.findByIdAndDelete(id).exec();
+    if (!summary) {
+      throw new Error("not found");
+    }
+    summary.save();
+    return summary;
+  } catch (error) {
+    console.error(error)
+    return
   }
 };

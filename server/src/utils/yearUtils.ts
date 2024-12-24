@@ -3,7 +3,6 @@ import { IYear, Year } from "../models/year";
 export const getYearDetails = async (yearNumber: number): Promise<IYear[]> => {
   try {
     const yearDetails = await Year.findOne({ year: yearNumber }).lean<IYear>();
-    console.log(yearDetails);
 
     if (!yearDetails) {
       throw new Error(`Year ${yearNumber} not found`);

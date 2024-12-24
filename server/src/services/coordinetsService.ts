@@ -73,7 +73,6 @@ export const searchCountries = async (query: { country?: string }) => {
 
 export const getDocumentsByCountry = async (countryName: string) => {
   try {
-    console.log(countryName, "getDocumentsByCountry");
     const documents: ISummary[] = await Summary.aggregate([
       {
         $match: {
@@ -97,11 +96,8 @@ export const searchByCityPrefix = async (
   prefix: string
 ) => {
   try {
-    console.log(countryName, "searchByCityPrefix");
-    console.log(prefix, "searchByCityPrefix");
 
     const documents: ISummary[] = await getDocumentsByCountry(countryName);
-    console.log(documents.slice(0, 20), "documents.slice(0,20)");
 
     const lowerCasePrefix = prefix.toLowerCase();
 
@@ -109,8 +105,6 @@ export const searchByCityPrefix = async (
       const city = doc.city?.toLowerCase();
       return city?.startsWith(lowerCasePrefix);
     });
-
-    console.log(matchingDocuments, "Filtered Documents by Prefix");
 
     const uniqueCities = Array.from(
       new Set(matchingDocuments.map((doc) => doc.city?.toLowerCase()))
@@ -123,7 +117,6 @@ export const searchByCityPrefix = async (
       ),
     }));
 
-    console.log(JSON.stringify(results), "Final Search Results");
     return results;
   } catch (error) {
     console.error(error);

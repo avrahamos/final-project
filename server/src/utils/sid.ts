@@ -78,7 +78,6 @@ export const aggregateAndInsertAttackTypes = async () => {
       );
     }
 
-    console.log("Data aggregated successfully!");
   } catch (error) {
     console.error(error);
   }
@@ -144,7 +143,6 @@ export const aggregateAndInsertCountries = async () => {
       );
     }
 
-    console.log("data aggregated successfully!");
   } catch (error) {
     console.error(error);
   }
