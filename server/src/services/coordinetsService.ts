@@ -100,13 +100,11 @@ export const searchByCityPrefix = async (
     console.log(countryName, "searchByCityPrefix");
     console.log(prefix, "searchByCityPrefix");
 
-    // שליפת כל המסמכים במדינה
     const documents: ISummary[] = await getDocumentsByCountry(countryName);
     console.log(documents.slice(0, 20), "documents.slice(0,20)");
 
     const lowerCasePrefix = prefix.toLowerCase();
 
-    // סינון מסמכים לפי קידומת העיר
     const matchingDocuments = documents.filter((doc) => {
       const city = doc.city?.toLowerCase();
       return city?.startsWith(lowerCasePrefix);
@@ -125,7 +123,7 @@ export const searchByCityPrefix = async (
       ),
     }));
 
-    console.log(results, "Final Search Results");
+    console.log(JSON.stringify(results), "Final Search Results");
     return results;
   } catch (error) {
     console.error(error);

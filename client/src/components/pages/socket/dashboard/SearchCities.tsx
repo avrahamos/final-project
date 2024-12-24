@@ -4,18 +4,21 @@ import {
   onSearchCitiesResults,
   searchCities,
 } from "../../../../socket/dashboard";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-const SearchCities: React.FC = () => {
+const SearchCities: React.FC<{ onCityClick: (cityData: any) => void }> = ({
+  onCityClick,
+}) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ISummaryResult[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const navigate = useNavigate();
 
   const location = useLocation() as unknown as { state: { country: string } };
   console.log("Location State:", location?.state);
   const countryName = location?.state?.country || "";
   console.log(countryName);
+
+
   useEffect(() => {
     onSearchCitiesResults((data) => {
       setResults(data);
@@ -29,7 +32,6 @@ const SearchCities: React.FC = () => {
     if (value.trim() !== "") {
       setIsTyping(true);
       searchCities(countryName, value.trim());
-
     } else {
       setResults([]);
     }
@@ -37,7 +39,7 @@ const SearchCities: React.FC = () => {
 
   const handleResultClick = (result: ISummaryResult) => {
     console.log("Selected location:", JSON.stringify(result));
-    navigate("/city-map", { state: result });
+     onCityClick(result);
   };
 
   return (

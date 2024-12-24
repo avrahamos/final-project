@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import DashboardMap from "./DashboardMap";
-import { useLocation } from "react-router-dom";
-import { CityData, CountryData } from "../../../../types/socket";
+import { useLocation, useNavigate } from "react-router-dom";
+import { CityData, CountryData, ISummaryResult } from "../../../../types/socket";
 import SearchCities from "./SearchCities";
-
 
 const CountryMap: React.FC = () => {
   const location = useLocation() as unknown as Location & {
     state: CountryData;
   };
 
+  const navigate = useNavigate();
   const [coordinates, setCoordinates] = useState<CountryData | null>(null);
   const [showSearch, setShowSearch] = useState(true);
 
@@ -27,6 +27,10 @@ const CountryMap: React.FC = () => {
     setShowSearch(false);
   };
 
+  const handleCityClick = (cityData: ISummaryResult) => {
+    navigate("/city-map", { state: cityData });
+  };
+
   return (
     <div className="relative w-full h-screen flex flex-col items-center justify-center">
       {showSearch && (
@@ -38,7 +42,7 @@ const CountryMap: React.FC = () => {
             -
           </button>
           <div className="relative">
-            <SearchCities />
+            <SearchCities onCityClick={handleCityClick} />
           </div>
         </div>
       )}
