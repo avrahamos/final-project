@@ -31,6 +31,21 @@ export const onSearchResults = (callback: (data: any) => void) => {
   }
 };
 
+export const searchCities = (countryName: string, query: string) => {
+  if (socket) {
+    socket.emit(EVENTS.Search_Cities, countryName, query);
+  }
+};
+
+export const onSearchCitiesResults = (callback: (data: any) => void) => {
+  if (socket) {
+    socket.on("searchCityResults", (data) => {
+      console.log("Received search results:", data.slice(0, 20));
+      callback(data);
+    });
+  }
+};
+
 export const disconnectListeners = (): void => {
   if (socket) {
     socket.off(EVENTS.Get_All_Coordinates);
