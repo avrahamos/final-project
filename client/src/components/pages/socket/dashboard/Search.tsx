@@ -28,7 +28,6 @@ const Search: React.FC = () => {
   };
 
   const handleResultClick = (result: ISearchResult) => {
-    console.log("Selected location:", result);
      navigate("/country-map", { state: result });
   };
 

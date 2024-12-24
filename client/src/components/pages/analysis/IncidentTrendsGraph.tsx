@@ -18,7 +18,6 @@ const IncidentTrendsGraph: React.FC = () => {
 
    if (Array.isArray(data) && data.length === 1) {
      const graphData = mapIncidentTrendsToGraphData(data[0]); 
-     console.log("Mapped graph data:", graphData); 
      setXKey("month");
    } else {
      console.error("Unexpected data format:", data);
@@ -36,7 +35,6 @@ const IncidentTrendsGraph: React.FC = () => {
   const handleRecentYears = async (limit: number) => {
     await loadLimit(limit);
     setGraphData(mapYearsToGraphData(data));
-    console.log("Data from server:", data);
     setXKey("year");
   };
 

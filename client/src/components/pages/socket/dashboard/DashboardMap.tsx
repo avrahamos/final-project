@@ -15,6 +15,7 @@ interface MarkerData {
   latitude: number;
   longitude: number;
   popupText?: string;
+  onClick?: () => void; 
 }
 
 interface DashboardMapProps {
@@ -22,6 +23,7 @@ interface DashboardMapProps {
   zoom: number;
   markers: MarkerData[];
   onMapClick?: (latitude: number, longitude: number) => void;
+
 }
 
 const ResetView: React.FC<{ center: [number, number] }> = ({ center }) => {
@@ -78,7 +80,13 @@ const DashboardMap: React.FC<DashboardMapProps> = ({
         <ResetView center={center} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {markers.map((marker, index) => (
-          <Marker key={index} position={[marker.latitude, marker.longitude]}>
+          <Marker
+            key={index}
+            position={[marker.latitude, marker.longitude]}
+            eventHandlers={{
+              click: marker.onClick, 
+            }}
+          >
             {marker.popupText && <Popup>{marker.popupText}</Popup>}
           </Marker>
         ))}
