@@ -27,7 +27,7 @@ const CityMap: React.FC = () => {
     setSelectedEvent(null);
   };
 
-  const handleUpdate = (updatedEvent: any) => {
+  const handleUpdate = () => {
     setSelectedEvent(null);
   };
 
