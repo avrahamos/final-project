@@ -358,3 +358,54 @@ export const updateAllCollections = async (summary: any) => {
      return { succses: false };
   }
 };
+
+export const deleteRelatedDocuments = async (summary: ISummary) => {
+  try {
+    const {
+      latitude,
+      longitude,
+      city,
+      country_txt,
+      gname,
+      region_txt,
+      iyear,
+      imonth,
+    } = summary;
+
+    await Coordinates.deleteOne({ latitude, longitude });
+
+    await Country.updateOne(
+      { country: country_txt },
+      {
+        $pull: { cities: { city } },
+      }
+    );
+
+    await Organization.updateOne(
+      { gname },
+      {
+        $pull: { regions: { region: region_txt } },
+      }
+    );
+
+    await Year.updateOne(
+      { year: iyear },
+      {
+        $pull: { months: { month: imonth } },
+      }
+    );
+
+    await OrganizationImpact.updateOne(
+      { gname },
+      {
+        $pull: { regions: { region: region_txt } },
+      }
+    );
+
+    console.log("documents deleted successfully");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error };
+  }
+};

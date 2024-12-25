@@ -1,6 +1,6 @@
 import { ISummary, Summary } from "../models/summary";
 import { IUpdateEventDto } from "../types/dto";
-import { updateAllCollections } from "../utils/crud";
+import { deleteRelatedDocuments, updateAllCollections } from "../utils/crud";
 
 export const updateSummaryById = async (
   id: string,
@@ -34,13 +34,15 @@ export const updateSummaryById = async (
 export const DeleteSummaryById = async (id: string) => {
   try {
     const summary = await Summary.findByIdAndDelete(id).exec();
-    if (!summary) {
-      throw new Error("not found");
+    if (summary) {
+      const result = await deleteRelatedDocuments(summary);
+      console.log("Summary and all deleted:", result);
+    } else {
+      console.log("Summary not found");
     }
-    summary.save();
     return summary;
   } catch (error) {
-    console.error(error)
-    return
+    console.error(error);
+    return;
   }
 };
