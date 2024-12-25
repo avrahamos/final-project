@@ -49,7 +49,7 @@ export const aggregateAndInsertAttackTypes = async () => {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          attacktype1_txt: { $exists: true, $ne: null },
+          attacktype1_txt: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
@@ -77,7 +77,6 @@ export const aggregateAndInsertAttackTypes = async () => {
         { upsert: true }
       );
     }
-
   } catch (error) {
     console.error(error);
   }
@@ -88,7 +87,7 @@ export const aggregateAndInsertCountries = async () => {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          country_txt: { $exists: true, $ne: null },
+          country_txt: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
@@ -142,7 +141,6 @@ export const aggregateAndInsertCountries = async () => {
         { upsert: true }
       );
     }
-
   } catch (error) {
     console.error(error);
   }
@@ -153,7 +151,7 @@ export const aggregateOrganizations = async () => {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          gname: { $exists: true, $ne: null }, 
+          gname: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
@@ -169,7 +167,7 @@ export const aggregateOrganizations = async () => {
           years: {
             $push: {
               year: "$_id.year",
-              events: "$events", 
+              events: "$events",
             },
           },
           casualties: { $sum: "$totalCasualties" },
@@ -207,9 +205,9 @@ export const aggregateOrganizations = async () => {
 
     for (const data of aggregatedData) {
       await Organization.updateOne(
-        { gname: data.gname }, 
-        { $set: data }, 
-        { upsert: true } 
+        { gname: data.gname },
+        { $set: data },
+        { upsert: true }
       );
     }
 
@@ -224,14 +222,14 @@ export const aggregateYearsWithEvents = async () => {
     const aggregatedData = await Summary.aggregate([
       {
         $match: {
-          iyear: { $exists: true, $ne: null },
-          imonth: { $exists: true, $ne: null },
+          iyear: { $exists: true, $nin: [null, "Unknown"] },
+          imonth: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
         $group: {
           _id: { year: "$iyear", month: "$imonth" },
-          eventsNum: { $sum: 1 }, 
+          eventsNum: { $sum: 1 },
         },
       },
       {
@@ -243,24 +241,24 @@ export const aggregateYearsWithEvents = async () => {
               eventsNum: "$eventsNum",
             },
           },
-          totalEvents: { $sum: "$eventsNum" }, 
+          totalEvents: { $sum: "$eventsNum" },
         },
       },
       {
         $project: {
           _id: 0,
           year: "$_id",
-          months: 1, 
-          totalEvents: 1, 
+          months: 1,
+          totalEvents: 1,
         },
       },
     ]);
 
     for (const data of aggregatedData) {
       await Year.updateOne(
-        { year: data.year }, 
-        { $set: data }, 
-        { upsert: true } 
+        { year: data.year },
+        { $set: data },
+        { upsert: true }
       );
     }
 
@@ -275,7 +273,7 @@ export const aggregateOrganizationImpact = async () => {
     const impacts = await Summary.aggregate([
       {
         $match: {
-          gname: { $exists: true, $ne: null }, 
+          gname: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
@@ -286,7 +284,7 @@ export const aggregateOrganizationImpact = async () => {
             latitude: "$latitude",
             longitude: "$longitude",
           },
-          casualties: { $sum: { $add: ["$nkill", "$nwound"] } }, 
+          casualties: { $sum: { $add: ["$nkill", "$nwound"] } },
         },
       },
       {
@@ -319,7 +317,7 @@ export const aggregateOrganizationImpact = async () => {
       );
     }
 
-    console.log("data aggregated successfully!");
+    console.log("data aggregated successfully");
   } catch (error) {
     console.error(error);
   }
@@ -330,8 +328,8 @@ export const agregateCoordinates = async () => {
     const coordinatesData = await Summary.aggregate([
       {
         $match: {
-          latitude: { $ne: null },
-          longitude: { $ne: null },
+          latitude: { $exists: true, $nin: [null, "Unknown"] },
+          longitude: { $exists: true, $nin: [null, "Unknown"] },
         },
       },
       {
@@ -340,20 +338,16 @@ export const agregateCoordinates = async () => {
           latitude: 1,
           longitude: 1,
           city: "$city",
-          country: "$country_txt", 
-          region: "$region_txt", 
+          country: "$country_txt",
+          region: "$region_txt",
         },
       },
     ]);
 
     await Coordinates.insertMany(coordinatesData);
 
-    console.log("Coordinates collection has been populated successfully.");
+    console.log("data aggregated successfully");
   } catch (error) {
-    console.error("Failed to populate coordinates collection:", error);
+    console.error(error);
   }
 };
-
-
-
-
