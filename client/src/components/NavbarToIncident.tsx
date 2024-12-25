@@ -8,7 +8,7 @@ interface NavbarProps {
   onRecentYears: (limit: number) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+const NavbarToIncident: React.FC<NavbarProps> = ({
   onSelectYear,
   onSelectRange,
   onRecentYears,
@@ -18,7 +18,6 @@ const Navbar: React.FC<NavbarProps> = ({
     currentYear - 5,
     currentYear,
   ]);
-
   return (
     <div className="flex items-center justify-between bg-gray-800 text-white p-4 fixed top-0 w-full z-10">
       <h2 className="text-lg font-bold">Incident Trends</h2>
@@ -79,4 +78,4 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-export default Navbar;
+export default NavbarToIncident;

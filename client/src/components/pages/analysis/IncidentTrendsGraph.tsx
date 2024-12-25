@@ -18,6 +18,7 @@ const IncidentTrendsGraph: React.FC = () => {
 
    if (Array.isArray(data) && data.length === 1) {
      const graphData = mapIncidentTrendsToGraphData(data[0]); 
+     console.log(graphData)
      setXKey("month");
    } else {
      console.error("Unexpected data format:", data);
