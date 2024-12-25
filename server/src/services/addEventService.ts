@@ -1,14 +1,7 @@
 import { ISummary, Summary } from "../models/summary";
 import { IAddEventDto } from "../types/dto";
 import { dateConverter, generateEventId } from "../utils/addEventUtils";
-import {  updateAllCollections } from "../utils/crud";
-
-const isFutureDate = (date: Date): boolean => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); 
-  return date > today; 
-};
-
+import { isFutureDate, updateAllCollections } from "../utils/crud";
 
 export const createNewEvent = async (
   addEventDto: IAddEventDto
@@ -31,14 +24,14 @@ export const createNewEvent = async (
       summary,
     } = addEventDto;
     const id = generateEventId(date);
-    const validDate = isFutureDate(date);
+    const { iyear, imonth, iday } = dateConverter(date);
+    const isValidDate = isFutureDate(iyear, imonth, iday);
 
-    if (!validDate) {
-      console.log("invalid date");
+    if (isValidDate) {
+      console.log("invalid date", date);
       return;
     }
-    const { iyear, imonth, iday } = dateConverter(date);
-    
+
     const newEvent = new Summary({
       eventid: id,
       iyear,
