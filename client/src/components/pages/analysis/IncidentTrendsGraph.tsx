@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   mapIncidentTrendsToGraphData,
   mapYearsToGraphData,
@@ -12,6 +12,18 @@ const IncidentTrendsGraph: React.FC = () => {
     useIncidentTrends();
   const [graphData, setGraphData] = useState<any[]>([]);
   const [xKey, setXKey] = useState<string>("year");
+
+
+  useEffect(() => {
+    if (Array.isArray(data) && data.length > 0) {
+      if (xKey === "year") {
+        setGraphData(mapYearsToGraphData(data));
+      } else if (xKey === "month") {
+        setGraphData(mapIncidentTrendsToGraphData(data[0]));
+      }
+    }
+  }, [data, xKey]);
+
 
  const handleSelectYear = async (year: number) => {
    await loadYear(year);
