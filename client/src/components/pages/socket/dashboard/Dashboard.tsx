@@ -8,13 +8,12 @@ import {
 } from "../../../../socket/dashboard";
 import Search from "./Search";
 import { ICoordinate } from "../../../../types/socket";
-
+import NavDashboard from "../../../NavDashboard";
 
 const Dashboard: React.FC = () => {
   const [coordinates, setCoordinates] = useState<ICoordinate[]>([]);
-  const [showSearch, setShowSearch] = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
 
-  
   useEffect(() => {
     connectSocket();
     return () => {
@@ -30,19 +29,14 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleCloseSearch = () => {
-    setShowSearch(false);
+    setShowSearch(!showSearch);
   };
 
   return (
     <div className="relative w-full h-screen flex flex-col items-center justify-center">
+      <NavDashboard onSearch={handleCloseSearch} />
       {showSearch && (
-        <div className="absolute top-4 w-full max-w-md z-10 p-4">
-          <button
-            onClick={handleCloseSearch}
-            className="absolute top-2 right-2 text-blue-500 hover:text-red-500 font-bold"
-          >
-            -
-          </button>
+        <div className="absolute top-4 w-full max-w-md z-10 p-20">
           <div className="relative">
             <Search />
           </div>
