@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { emitAddEvent } from "../../../../socket/addEvent";
+import { useEffect, useState } from "react";
+import { emitAddEvent, onEventAdded } from "../../../../socket/addEvent";
 import { IAddEventDto } from "../../../../types/addNewEvent";
+import { socket } from "../../../../socket/appIo";
 
 const AddEvent: React.FC<{
   latitude: number;
@@ -24,6 +25,21 @@ const AddEvent: React.FC<{
     longitude,
   });
 
+  const [events, setEvents] = useState<IAddEventDto[]>([]);
+
+  useEffect(() => {
+    const handleNewEvent = (newEvent: IAddEventDto) => {
+      console.log(newEvent);
+      setEvents((prevEvents) => [...prevEvents, newEvent]); 
+    };
+
+    onEventAdded(handleNewEvent);
+
+    return () => {
+      socket?.off("eventAdded", handleNewEvent);
+    };
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -31,19 +47,25 @@ const AddEvent: React.FC<{
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await emitAddEvent(formData);
-      alert("Event added successfully!");
-      onClose();
-    } catch (err) {
-      alert("failed to add event: " + err);
-    }
+    emitAddEvent(formData, (response) => {
+      if (response.success) {
+        console.log( response.data);
+        alert("Event added successfully");
+        onClose(); 
+      } else {
+        console.error( response.error);
+        alert("failed to add event: " + response.error);
+      }
+    });
   };
+
   const handleNumberChange = (field: keyof IAddEventDto, value: number) => {
     setFormData({ ...formData, [field]: value });
+    events
   };
+
 
   return (
     <div className="relative to-blue-700 p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto z-50">
@@ -54,7 +76,7 @@ const AddEvent: React.FC<{
           <input
             type="date"
             name="date"
-            value={formData.date ? formData.date.toString() : ""}
+            value={formData.date ? formData.date.toString():""}
             onChange={handleInputChange}
             className="w-full p-2 text-center text-gray-800 placeholder-gray-400 bg-transparent border-2 border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:placeholder-gray-800"
           />
