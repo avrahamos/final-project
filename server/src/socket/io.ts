@@ -4,8 +4,8 @@ import {
   setupSearchCities,
   setupSearchEvents,
 } from "./coordinatesHandler";
-import { setUpCreateEvevt } from "./createEventIo";
 import { SetupDelelteEvent, setUpUpdateEvent } from "./updatedSummary";
+import { setUpCreateEvevt } from "./createEventIo";
 
 export const setupSocketEvents = (io: Server) => {
   io.on("connection", (client: Socket) => {
@@ -13,11 +13,11 @@ export const setupSocketEvents = (io: Server) => {
 
     setupCoordinatesEvents(client);
     setupSearchEvents(client);
-    setUpCreateEvevt(client);
-    setUpUpdateEvent(client)
-    setupSearchCities(client)
-    SetupDelelteEvent(client)
-    
+    setUpCreateEvevt(io, client);
+    setUpUpdateEvent(client);
+    setupSearchCities(client);
+    SetupDelelteEvent(client);
+
     client.on("disconnect", () => {
       console.log(`Client disconnected: ${client.id}`);
     });
